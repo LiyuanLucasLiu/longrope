@@ -2,7 +2,7 @@
 
 TARGET_LENGTH=$((32 * 1024))
 
-MODEL_PATH=meta-llama/Meta-Llama-3-8B
+MODEL_PATH=GSAI-ML/LLaDA-8B-Instruct
 DATASET_PATH=$(pwd)/datasets/pg19-valid-llama-tokenized
 RESULT_PATH=$(pwd)/results/search/llama3-8b/$TARGET_LENGTH
 
@@ -17,5 +17,5 @@ python evolution/search.py \
     --dataset-min-tokens 131072 \
     --samples 5 \
     --truncate \
-    --attn-implementation flash_attention_2 \
+    --attn-implementation eager \
     --model-size-gb 14

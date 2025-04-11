@@ -5,7 +5,7 @@
 export CUDA_VISIBLE_DEVICES=0
 
 export TARGET_LENGTH=$((32 * 1024))
-MODEL_PATH=meta-llama/Meta-Llama-3-8B
+MODEL_PATH=GSAI-ML/LLaDA-8B-Instruct
 DATASETS_PATH=$(pwd)/datasets
 
 export ROPE_METHOD=longrope

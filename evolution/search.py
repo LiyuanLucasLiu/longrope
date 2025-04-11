@@ -115,6 +115,7 @@ def main(args):
 
     logger.info(f"Loading model config: {args.model}")
     config = transformers.AutoConfig.from_pretrained(args.model, trust_remote_code=True)
+    config.max_position_embeddings = config.max_sequence_length
     head_size = config.hidden_size // config.num_attention_heads
     half_head_size = head_size // 2
     target_length = int(args.target_length)

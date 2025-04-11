@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MODEL_PATH=meta-llama/Meta-Llama-3-8B
+MODEL_PATH=GSAI-ML/LLaDA-8B-Instruct
 
 DATASETS_PATH=$(pwd)/datasets
 mkdir -p $DATASETS_PATH

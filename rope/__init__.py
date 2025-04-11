@@ -31,7 +31,10 @@ def replace_rope(
     Returns:
         AutoModelForCausalLM: The modified model with the new RoPE in each layer.
     """
-    for idx, layer in enumerate(model.model.layers):
+    print(model)
+    print(model.config)
+    head_dim = model.config.d_model // model.config.n_heads
+    for idx, layer in enumerate(model.model.transformer.blocks):
         layer_rope_args = {}
         for k, v in rope_args.items():
             if type(v) is np.ndarray and v.ndim == 2:
@@ -39,14 +42,14 @@ def replace_rope(
             else:
                 layer_rope_args[k] = v
         if 'dim' not in layer_rope_args:
-            layer_rope_args['dim'] = layer.self_attn.head_dim
+            layer_rope_args['dim'] = head_dim
         device = "auto"
-        if hasattr(layer.self_attn, "o_proj"):
-            device = layer.self_attn.o_proj.weight.device
-        elif hasattr(layer.self_attn, "dense"):
-            device = layer.self_attn.dense.weight.device
+        if hasattr(layer, "q_proj"):
+            device = layer.q_proj.weight.device
+        elif hasattr(layer, "dense"):
+            device = layer.dense.weight.device
         layer_rope_args['device'] = device
-        layer.self_attn.rotary_emb = rope_class(**layer_rope_args)
+        layer.rotary_emb = rope_class(**layer_rope_args)
     return model
 
 
@@ -86,7 +89,8 @@ def load_model(
     """
     if config is None:
         config = AutoConfig.from_pretrained(model_name_or_path, trust_remote_code=True)
-
+    config.max_position_embeddings = config.max_sequence_length
+    
     # NOTE: please force using attn_implementation="flash_attention_2" for now
     if hasattr(config, 'sliding_window') and config.sliding_window is not None:
         original_max_position_embeddings = config.sliding_window
